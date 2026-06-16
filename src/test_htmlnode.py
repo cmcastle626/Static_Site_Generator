@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_autonone(self):
@@ -15,11 +15,6 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode(props={"mouse":"cookie","moose":"muffin","calvin":"hobbes"})
         self.assertEqual('mouse="cookie" moose="muffin" calvin="hobbes"',node.props_to_html())
 
-    def test_tohtmlerror(self):
-        node = HTMLNode("tag","value")
-        with self.assertRaises(NotImplementedError):
-            node.to_html()
-
     def test_values(self):
         node = HTMLNode("h1", None, ["lions","tigers","bears"],{"mouse":"cookie","moose":"muffin"})
         self.assertEqual("h1",node.tag)
@@ -30,4 +25,25 @@ class TestHTMLNode(unittest.TestCase):
     def test_rep(self):
         node = HTMLNode("h1", None, ["lions","tigers","bears"],{"mouse":"cookie","moose":"muffin"})
         self.assertEqual("HTMLNode(h1, None, children: ['lions', 'tigers', 'bears'], {'mouse': 'cookie', 'moose': 'muffin'})",
+                         repr(node))
+        
+class TestLeafNode(unittest.TestCase):
+    def test_leaf_to_html_p(self):
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+        self.assertEqual(node.props, None)
+
+    def test_tohtml_emptyvalue(self):
+        node = LeafNode("p",None)
+        with self.assertRaises(ValueError):
+            node.to_html()
+
+    def test_leaf_values(self):
+        node = LeafNode("p", "hello", {"calvin":"hobbes"})
+        self.assertEqual(node.children, None)
+        self.assertEqual(node.props,{'calvin': 'hobbes'})
+
+    def test_rep(self):
+            node = LeafNode(None, "hello world", {"mouse":"cookie","moose":"muffin"})
+            self.assertEqual("LeafNode(None, hello world, {'mouse': 'cookie', 'moose': 'muffin'})",
                          repr(node))
