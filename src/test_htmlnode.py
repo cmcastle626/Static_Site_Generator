@@ -19,7 +19,15 @@ class TestHTMLNode(unittest.TestCase):
         node = HTMLNode("tag","value")
         with self.assertRaises(NotImplementedError):
             node.to_html()
-            
+
+    def test_values(self):
+        node = HTMLNode("h1", None, ["lions","tigers","bears"],{"mouse":"cookie","moose":"muffin"})
+        self.assertEqual("h1",node.tag)
+        self.assertEqual(None,node.value)
+        self.assertEqual(["lions", "tigers", "bears"],node.children)
+        self.assertEqual({"mouse":"cookie","moose":"muffin"}, node.props)
+
     def test_rep(self):
-        node = HTMLNode("h1","hello world",["lions","tigers","and bears"],{"mouse":"cookie","moose":"muffin","calvin":"hobbes"})
-        self.assertEqual("HTMLNode(h1, hello world, ['lions', 'tigers', 'and bears'], {'mouse': 'cookie', 'moose': 'muffin', 'calvin': 'hobbes'})",repr(node))
+        node = HTMLNode("h1", None, ["lions","tigers","bears"],{"mouse":"cookie","moose":"muffin"})
+        self.assertEqual("HTMLNode(h1, None, children: ['lions', 'tigers', 'bears'], {'mouse': 'cookie', 'moose': 'muffin'})",
+                         repr(node))
