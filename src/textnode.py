@@ -2,12 +2,12 @@ from enum import Enum
 from htmlnode import LeafNode
 
 class TextType(Enum):
-    text_texttype = "text"
-    bold_texttype = "bold"
-    italic_texttype = "italic"
-    code_texttype = "code"
-    link_texttype = "link"
-    image_texttype = "image"
+    text = "text"
+    bold = "bold"
+    italic = "italic"
+    code = "code"
+    link = "link"
+    image = "image"
 
 class TextNode:
     def __init__(self, text: str, text_type: TextType, url: str | None = None):
@@ -25,19 +25,19 @@ class TextNode:
     
 def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     ttype = text_node.text_type
-    print(f"proccing ttype check... ttype: {ttype}")
-    if ttype == TextType.text_texttype:
+    if ttype == TextType.text:
         return LeafNode(None, text_node.text, None)
-    elif ttype == TextType.bold_texttype:
+    elif ttype == TextType.bold:
         return LeafNode("b", text_node.text)
-    elif ttype == TextType.italic_texttype:
+    elif ttype == TextType.italic:
         return LeafNode("i", text_node.text)
-    elif ttype == TextType.code_texttype:
+    elif ttype == TextType.code:
         return LeafNode("code", text_node.text)
-    elif ttype == TextType.link_texttype:
+    elif ttype == TextType.link:
         return LeafNode("a", text_node.text,{"href":text_node.url})
-    elif ttype == TextType.image_texttype:
+    elif ttype == TextType.image:
         return LeafNode("img","",{"src":text_node.url, "alt":text_node.text})
     else:
         raise Exception("not using supported text type")
     
+
