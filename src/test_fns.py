@@ -1,7 +1,8 @@
 import unittest
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from textnode import TextNode, TextType, text_node_to_html_node
-from convert_fns import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
+from convert_fns import split_nodes_delimiter, extract_markdown_images
+from convert_fns import extract_markdown_links, split_nodes_image, split_nodes_link
 
 class TestSplitNodesDelimiter(unittest.TestCase):
     def test_boldphrase(self):
@@ -70,6 +71,16 @@ class TestExtractImages(unittest.TestCase):
         ]
         self.assertEqual(res,exp)
 
+    def test_sameimage(self):
+        test = "Here is image: ![img1](image1.jpeg) and here it is again: ![img1](image1.jpeg)"
+        res = extract_markdown_images(test)
+        exp = [
+            ("img1", "image1.jpeg"),
+            ("img1", "image1.jpeg")
+        ]
+        self.assertEqual(res,exp)
+
+
 class TestExtractLinks(unittest.TestCase):
     def test_basicextract(self):
         test = ("Here is a link: [the title](www.link.com)")
@@ -91,5 +102,129 @@ class TestExtractLinks(unittest.TestCase):
         res = extract_markdown_links(test)
         exp = [
             ("link1","www.link1.com")
+        ]
+        self.assertEqual(res,exp)
+
+
+class TextSplitNodesImage(unittest.TestCase):
+    def test_basicsplit(self):
+        nodes = [TextNode(
+            "Here is an image ![img1](image1here.png) in the middle.",
+            TextType.text
+        )]
+        res = split_nodes_image(nodes)
+        exp = [
+            TextNode("Here is an image ", TextType.text),
+            TextNode("img1", TextType.image, "image1here.png"),
+            TextNode(" in the middle.", TextType.text)
+        ]
+        self.assertEqual(res, exp)
+
+    def test_sameimage(self):
+        nodes = [TextNode(
+            "![img1](image1here.png)Same image at beginning and end.![img1](image1here.png)",
+            TextType.text
+        )]
+        res = split_nodes_image(nodes)
+        exp = [
+            TextNode("img1", TextType.image, "image1here.png"),
+            TextNode("Same image at beginning and end.", TextType.text),
+            TextNode("img1", TextType.image, "image1here.png")
+        ]
+        self.assertEqual(res,exp)
+
+    def test_NodeList(self):
+        nodes = [
+            TextNode("I'm a **bold** line oo-RAH!", TextType.bold),
+            TextNode("I'm a text node with an image!!!![img1](img1.png)", TextType.text),
+            TextNode("I'm another ![img2](img2.jpeg) text with an image!", TextType.text),
+            TextNode("I'm a regular text node.", TextType.text)
+        ]
+        res = split_nodes_image(nodes)
+        exp = [
+            TextNode("I'm a **bold** line oo-RAH!", TextType.bold),
+            TextNode("I'm a text node with an image!!!", TextType.text),
+            TextNode("img1", TextType.image, "img1.png"),
+            TextNode("I'm another ", TextType.text),
+            TextNode("img2", TextType.image, "img2.jpeg"),
+            TextNode(" text with an image!", TextType.text),
+            TextNode("I'm a regular text node.", TextType.text)
+        ]
+        self.assertEqual(res,exp)
+
+    def test_NoTextInNode(self):
+        nodes = [
+            TextNode("Hello", TextType.text),
+            TextNode("",TextType.text),
+            TextNode("World", TextType.text),
+            TextNode("![img1](img1.png)", TextType.text)
+        ]
+        res = split_nodes_image(nodes)
+        exp = [
+            TextNode("Hello", TextType.text),
+            TextNode("World", TextType.text),
+            TextNode("img1", TextType.image, "img1.png")
+        ]
+        self.assertEqual(res,exp)
+
+
+class TextSplitNodesLink(unittest.TestCase):
+    def test_basicsplit(self):
+        nodes = [TextNode(
+            "Here is a link [hello world](www.world.com) in the middle.",
+            TextType.text
+        )]
+        res = split_nodes_link(nodes)
+        exp = [
+            TextNode("Here is a link ", TextType.text),
+            TextNode("hello world", TextType.link, "www.world.com"),
+            TextNode(" in the middle.", TextType.text)
+        ]
+        self.assertEqual(res, exp)
+
+    def test_samelink(self):
+        nodes = [TextNode(
+            "[hello](www.hello.net)Same link at beginning and end.[hello](www.hello.net)",
+            TextType.text
+        )]
+        res = split_nodes_link(nodes)
+        exp = [
+            TextNode("hello", TextType.link, "www.hello.net"),
+            TextNode("Same link at beginning and end.", TextType.text),
+            TextNode("hello", TextType.link, "www.hello.net")
+        ]
+        self.assertEqual(res,exp)
+
+    def test_NodeList(self):
+        nodes = [
+            TextNode("I'm an _italic_ line oo-RAH!", TextType.italic),
+            TextNode("I'm a text node with a link!!! [link1](www.link1.com)", TextType.text),
+            TextNode("I'm another [link2 text](www.link2.com) text with a link!", TextType.text),
+            TextNode("I'm a regular text node.", TextType.text)
+        ]
+        res = split_nodes_link(nodes)
+        exp = [
+            TextNode("I'm an _italic_ line oo-RAH!", TextType.italic),
+            TextNode("I'm a text node with a link!!! ", TextType.text),
+            TextNode("link1", TextType.link, "www.link1.com"),
+            TextNode("I'm another ", TextType.text),
+            TextNode("link2 text", TextType.link, "www.link2.com"),
+            TextNode(" text with a link!", TextType.text),
+            TextNode("I'm a regular text node.", TextType.text)
+        ]
+        self.assertEqual(res,exp)
+
+    def test_NoTextInNode(self):
+        nodes = [
+            TextNode("Hello", TextType.text),
+            TextNode("",TextType.text),
+            TextNode("World", TextType.text),
+            TextNode("[link1](www.link1.com)", TextType.text)
+        ]
+        res = split_nodes_link(nodes)
+        exp = [
+            TextNode("Hello", TextType.text),
+            TextNode("World", TextType.text),
+            TextNode("link1", TextType.link, "www.link1.com")
         ]
         self.assertEqual(res,exp)
