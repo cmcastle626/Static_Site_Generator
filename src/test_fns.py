@@ -1,8 +1,14 @@
 import unittest
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from textnode import TextNode, TextType, text_node_to_html_node
-from convert_fns import split_nodes_delimiter, extract_markdown_images
-from convert_fns import extract_markdown_links, split_nodes_image, split_nodes_link
+from convert_fns import (
+    split_nodes_delimiter,
+    extract_markdown_images,
+    extract_markdown_links,
+    split_nodes_image,
+    split_nodes_link,
+    text_to_textnodes)
+
 
 class TestSplitNodesDelimiter(unittest.TestCase):
     def test_boldphrase(self):
@@ -106,7 +112,7 @@ class TestExtractLinks(unittest.TestCase):
         self.assertEqual(res,exp)
 
 
-class TextSplitNodesImage(unittest.TestCase):
+class TestSplitNodesImage(unittest.TestCase):
     def test_basicsplit(self):
         nodes = [TextNode(
             "Here is an image ![img1](image1here.png) in the middle.",
@@ -168,7 +174,7 @@ class TextSplitNodesImage(unittest.TestCase):
         self.assertEqual(res,exp)
 
 
-class TextSplitNodesLink(unittest.TestCase):
+class TestSplitNodesLink(unittest.TestCase):
     def test_basicsplit(self):
         nodes = [TextNode(
             "Here is a link [hello world](www.world.com) in the middle.",
@@ -228,3 +234,22 @@ class TextSplitNodesLink(unittest.TestCase):
             TextNode("link1", TextType.link, "www.link1.com")
         ]
         self.assertEqual(res,exp)
+
+
+class TestTextToTextNodes(unittest.TestCase):
+    def test_BootDevExample(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        res = text_to_textnodes(text)
+        exp = [
+            TextNode("This is ", TextType.text),
+            TextNode("text", TextType.bold),
+            TextNode(" with an ", TextType.text),
+            TextNode("italic", TextType.italic),
+            TextNode(" word and a ", TextType.text),
+            TextNode("code block", TextType.code),
+            TextNode(" and an ", TextType.text),
+            TextNode("obi wan image", TextType.image, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.text),
+            TextNode("link", TextType.link, "https://boot.dev"),
+        ]
+        self.assertEqual(res, exp)
