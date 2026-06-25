@@ -253,3 +253,19 @@ class TestTextToTextNodes(unittest.TestCase):
             TextNode("link", TextType.link, "https://boot.dev"),
         ]
         self.assertEqual(res, exp)
+
+    def test_ItalicsBoldImage(self):
+        text = "It's _levi_**OH**_sah_, not _levioh_**SAH**.![hermoine eye roll](hermoine.gif)"
+        res = text_to_textnodes(text)
+        exp = [
+            TextNode("It's ", TextType.text),
+            TextNode("levi", TextType.italic),
+            TextNode("OH", TextType.bold),
+            TextNode("sah", TextType.italic),
+            TextNode(", not ", TextType.text),
+            TextNode("levioh", TextType.italic),
+            TextNode("SAH", TextType.bold),
+            TextNode(".", TextType.text),
+            TextNode("hermoine eye roll", TextType.image, "hermoine.gif")
+        ]
+        self.assertEqual(res, exp)
