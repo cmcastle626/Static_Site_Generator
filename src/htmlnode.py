@@ -21,6 +21,13 @@ class HTMLNode:
         val = val[:-1]
         return val
     
+    def __eq__(self, other):
+        if not isinstance(other, HTMLNode):
+            return NotImplemented
+        if self.tag == other.tag and self.value == other.value and self.children == other.children and self.props == other.props:
+            return True
+        return False
+    
     def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})"
     
@@ -40,7 +47,7 @@ class ParentNode(HTMLNode):
     def to_html(self):
         if self.tag == None:
             raise ValueError("missing tag")
-        if self.children == None:
+        if self.children is None:
             raise ValueError("missing children")
         res = f"<{self.tag}>"
         for child in self.children:

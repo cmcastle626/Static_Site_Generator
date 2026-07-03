@@ -1,7 +1,6 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode, ParentNode
-from textnode import TextNode, TextType, text_node_to_html_node
-from convert_fns import (
+from textnode import TextNode, TextType
+from inline_convert_fns import (
     split_nodes_delimiter,
     extract_markdown_images,
     extract_markdown_links,
