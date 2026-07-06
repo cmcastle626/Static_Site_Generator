@@ -1,5 +1,6 @@
 from block_convert_fns import markdown_to_html_node
-import os
+import os, shutil
+from pathlib import Path
 
 def extract_title(markdown: str):
     clean_markdown = markdown.strip()
@@ -10,10 +11,11 @@ def extract_title(markdown: str):
     title = title.strip()
     return title
 
+
+
 def generating_page(from_path, template_path, dest_path):
     if not os.path.exists(from_path) or not os.path.exists(template_path):
         raise Exception("Content and/or template path do not exist")
-    
     dir_dest = os.path.dirname(dest_path)
     if not os.path.exists(dir_dest):
         os.makedirs(dir_dest)
@@ -37,4 +39,23 @@ def generating_page(from_path, template_path, dest_path):
     new_file.close()
 
 
+
+def generate_pages_recursive(from_path, template_path, dest_path):
+    if not os.path.exists(from_path) or not os.path.exists(template_path):
+        raise Exception("Content and/or template path do not exist")
+    for item in os.listdir(from_path):
+        item_name = Path(item)
+        print(f"item_name is: {item_name}\nis directory? {Path(os.path.join(from_path, item)).is_dir()}")
+
+        if item.endswith(".md"):
+            full_from_path = os.path.join(from_path, item)
+            remove_md = item_name.stem
+            full_dest_path = dest_path + rf"/{remove_md}.html"
+            generating_page(full_from_path, template_path, full_dest_path)
+        elif Path(os.path.join(from_path, item)).is_dir():
+            sub_from_path = os.path.join(from_path, item)
+            sub_dest_path = os.path.join(dest_path, item)
+            generate_pages_recursive(sub_from_path, template_path, sub_dest_path)
+        else:
+            continue
 

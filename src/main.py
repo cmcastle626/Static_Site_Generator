@@ -1,5 +1,5 @@
 from linux_fns import source_to_target_directory
-from generate_page_fns import generating_page
+from generate_page_fns import generate_pages_recursive
 import os
 import shutil
 
@@ -11,10 +11,10 @@ def main():
         shutil.rmtree(fpath_target)
     source_to_target_directory(fpath_source, fpath_target)
     
-    from_path = "./content/index.md"
-    dest_path = "./public/index.html"
+    from_path = "./content"
+    dest_path = "./public"
     template_path = "./template.html"
-    generating_page(from_path, template_path, dest_path)
+    generate_pages_recursive(from_path, template_path, dest_path)
 
 
 main()
