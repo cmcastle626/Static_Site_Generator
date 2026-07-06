@@ -13,7 +13,9 @@ class TestHTMLNode(unittest.TestCase):
 
     def test_propstohtml(self):
         node = HTMLNode(props={"mouse":"cookie","moose":"muffin","calvin":"hobbes"})
-        self.assertEqual('mouse="cookie" moose="muffin" calvin="hobbes"',node.props_to_html())
+        res = node.props_to_html()
+        exp = ' mouse="cookie" moose="muffin" calvin="hobbes"'
+        self.assertEqual(res, exp)
 
     def test_values(self):
         node = HTMLNode("h1", None, ["lions","tigers","bears"],{"mouse":"cookie","moose":"muffin"})

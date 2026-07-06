@@ -36,7 +36,7 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
     elif ttype == TextType.link:
         return LeafNode("a", text_node.text,{"href":text_node.url})
     elif ttype == TextType.image:
-        return LeafNode("img","",{"src":text_node.url, "alt":text_node.text})
+        return LeafNode("img", "", {"src": text_node.url, "alt":text_node.text})
     else:
         raise Exception("not using supported text type")
     
