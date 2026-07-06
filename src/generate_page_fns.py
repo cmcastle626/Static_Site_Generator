@@ -36,3 +36,5 @@ def generating_page(from_path, template_path, dest_path):
     new_file.write(modified_template)
     new_file.close()
 
+
+

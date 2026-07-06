@@ -3,6 +3,9 @@ import shutil
 
 def source_to_target_directory(fpath_source: str, fpath_target: str) -> None:
     if not os.path.exists(fpath_source):
+         raise Exception("source directory does not exist")
+    
+    if not os.path.exists(fpath_target):
             os.mkdir(fpath_target)
 
     for filename in os.listdir(fpath_source):
