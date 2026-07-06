@@ -13,7 +13,7 @@ def extract_title(markdown: str):
 
 
 
-def generating_page(from_path, template_path, dest_path):
+def generating_page(from_path, template_path, dest_path, basepath):
     if not os.path.exists(from_path) or not os.path.exists(template_path):
         raise Exception("Content and/or template path do not exist")
     dir_dest = os.path.dirname(dest_path)
@@ -33,6 +33,8 @@ def generating_page(from_path, template_path, dest_path):
     title = extract_title(markdown)
     modified_template = template.replace("{{ Title }}", title)
     modified_template = modified_template.replace("{{ Content }}", html_result)
+    modified_template = modified_template.replace('href="/',f'href="{basepath}')
+    modified_template = modified_template.replace('src="/', f'src="{basepath}')
 
     new_file = open(dest_path, "w+")
     new_file.write(modified_template)
@@ -40,7 +42,7 @@ def generating_page(from_path, template_path, dest_path):
 
 
 
-def generate_pages_recursive(from_path, template_path, dest_path):
+def generate_pages_recursive(from_path, template_path, dest_path, basepath):
     if not os.path.exists(from_path) or not os.path.exists(template_path):
         raise Exception("Content and/or template path do not exist")
     for item in os.listdir(from_path):
@@ -50,11 +52,11 @@ def generate_pages_recursive(from_path, template_path, dest_path):
             full_from_path = os.path.join(from_path, item)
             remove_md = item_name.stem
             full_dest_path = dest_path + rf"/{remove_md}.html"
-            generating_page(full_from_path, template_path, full_dest_path)
+            generating_page(full_from_path, template_path, full_dest_path, basepath)
         elif Path(os.path.join(from_path, item)).is_dir():
             sub_from_path = os.path.join(from_path, item)
             sub_dest_path = os.path.join(dest_path, item)
-            generate_pages_recursive(sub_from_path, template_path, sub_dest_path)
+            generate_pages_recursive(sub_from_path, template_path, sub_dest_path, basepath)
         else:
             continue
 
