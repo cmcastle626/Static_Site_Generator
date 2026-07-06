@@ -4,8 +4,8 @@ import os
 import shutil
 
 def main():
-    fpath_target = r"/home/chloe/workspace/bootdotdev/curriculum/Static_Site_Generator/public"
-    fpath_source = r"/home/chloe/workspace/bootdotdev/curriculum/Static_Site_Generator/static"
+    fpath_target = r"./public"
+    fpath_source = r"./static"
     print("Deleting public directory...")
     if os.path.exists(fpath_target):
         shutil.rmtree(fpath_target)

@@ -45,7 +45,6 @@ def generate_pages_recursive(from_path, template_path, dest_path):
         raise Exception("Content and/or template path do not exist")
     for item in os.listdir(from_path):
         item_name = Path(item)
-        print(f"item_name is: {item_name}\nis directory? {Path(os.path.join(from_path, item)).is_dir()}")
 
         if item.endswith(".md"):
             full_from_path = os.path.join(from_path, item)
